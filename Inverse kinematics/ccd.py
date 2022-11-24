@@ -60,9 +60,9 @@ def cin_dir(th,a):
 # Cálculo de la cinemática inversa de forma iterativa por el método CCD
 
 # valores articulares arbitrarios para la cinemática directa inicial
-th=[0.,0.,0.]
-a =[5.,5.,5.]
-##prismatica = [False, False, False]
+th=[0.,0.,0.,0.]
+a =[5.,5.,5.,2.]
+prismatica = [False, False, False, True]
 L = sum(a) # variable para representación gráfica
 EPSILON = .01
 
@@ -90,15 +90,26 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
   for i in range(len(th)):
     # cálculo de la cinemática inversa:
     #if es una articulación de revolución 
-    v1 = [O[i][len(th)][0]-O[i][len(th) - i -1][0],O[i][len(th)][1] - O[i][len(th) - i -1][1]]
-    v2 = [objetivo[0] - O[i][len(th) - i -1][0],objetivo[1] - O[i][len(th) - i -1][1]]
-    alfa1 = atan2(v1[1],v1[0])
-    alfa2 = atan2(v2[1],v2[0])
-    th[len(th) - i -1] = th[len(th) - i -1] + alfa2 - alfa1  
-    O[i+1] = cin_dir(th,a)
+    if not prismatica[len(th) - i -1]:
+      v1 = [O[i][len(th)][0]-O[i][len(th) - i -1][0],O[i][len(th)][1] - O[i][len(th) - i -1][1]]
+      v2 = [objetivo[0] - O[i][len(th) - i -1][0],objetivo[1] - O[i][len(th) - i -1][1]]
+      alfa1 = atan2(v1[1],v1[0])
+      alfa2 = atan2(v2[1],v2[0])
+      th[len(th) - i -1] = th[len(th) - i -1] + alfa2 - alfa1  
+      O[i+1] = cin_dir(th,a)
     #else es una articulación prismática
-        
-    #O[i+1] = cin_dir(th,a)
+    else:
+      angulos = th[0:len(th) - i -1]
+      omega = sum(angulos)
+      aux = [cos(omega),sin(omega)]
+      R_O = [5, 5]
+
+      print(aux)
+      d = np.dot(aux, R_o)
+      #d = np.dot([cos(omega),sin(omega)], 5)
+      print(d) 
+      a[len(th) - i -1] = a[len(th) - i -1] + d
+      O[i+1] = cin_dir(th,a)
 
   dist = np.linalg.norm(np.subtract(objetivo,O[-1][-1]))
   print ("\n- Iteracion " + str(iteracion) + ':')
