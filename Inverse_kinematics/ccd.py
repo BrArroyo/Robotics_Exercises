@@ -66,8 +66,9 @@ prismatica = [False, False, False, True]
 L = sum(a) # variable para representación gráfica
 EPSILON = .01
 
-##limMax = [90*pi/180, 10, 90*pi/180, 90 * pi/180]
-##limMin = [-90*pi/180, 0, -90*pi/180, -90 * pi/180]
+# Limites de los articulaciones
+lim_max = [pi/2, pi/2, pi/2, 10]
+lim_min = [-pi/2, -pi/2, -pi/2, 0]
 
 plt.ion() # modo interactivo
 
@@ -91,25 +92,41 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
     # cálculo de la cinemática inversa:
     #if es una articulación de revolución 
     if not prismatica[len(th) - i -1]:
+      # Calculamos el angulo 
       v1 = [O[i][len(th)][0]-O[i][len(th) - i -1][0],O[i][len(th)][1] - O[i][len(th) - i -1][1]]
       v2 = [objetivo[0] - O[i][len(th) - i -1][0],objetivo[1] - O[i][len(th) - i -1][1]]
       alfa1 = atan2(v1[1],v1[0])
       alfa2 = atan2(v2[1],v2[0])
+      
+      # Actualizamos el valor de la articulación
       th[len(th) - i -1] = th[len(th) - i -1] + alfa2 - alfa1  
-      O[i+1] = cin_dir(th,a)
+    
+      # corregimos los angulos con los límites
+      if th[len(th) - i -1] > lim_max[len(th) - i -1]:
+        th[len(th) - i -1] = lim_max[len(th) - i -1]
+      if th[len(th) - i -1] < lim_min[len(th) - i -1]:
+        th[len(th) - i -1] = lim_min[len(th) - i -1]  
+      
     #else es una articulación prismática
     else:
-      angulos = th[0:len(th) - i -1]
-      omega = sum(angulos)
-      aux = [cos(omega),sin(omega)]
-      R_O = [5, 5]
-
-      print(aux)
-      d = np.dot(aux, R_o)
-      #d = np.dot([cos(omega),sin(omega)], 5)
-      print(d) 
-      a[len(th) - i -1] = a[len(th) - i -1] + d
-      O[i+1] = cin_dir(th,a)
+      # Calculamo la suma de las articulaciones
+      omega = sum(th[0:len(th) - i -1])
+      
+      # Calculamos los vectores correspondientes y calculamos el producto escalar
+      vector_despesplazamiento = [cos(omega),sin(omega)]
+      vector_acercamiento = np.subtract(objetivo, [O[i][len(th) - i -1][0], O[i][len(th) - i -1][1]])
+      distancia = np.dot(vector_despesplazamiento, vector_acercamiento)
+      
+      # Actualizamos el valor de la articulación
+      a[len(th) - i -1] += distancia
+      
+      # corregimos las distancia con los limiites
+      if a[len(th) - i -1] > lim_max[len(th) - i -1]:
+        a[len(th) - i -1] = lim_max[len(th) - i -1]
+      if a[len(th) - i -1] < lim_min[len(th) - i -1]:
+        a[len(th) - i -1] = lim_min[len(th) - i -1] 
+      
+    O[i+1] = cin_dir(th,a)
 
   dist = np.linalg.norm(np.subtract(objetivo,O[-1][-1]))
   print ("\n- Iteracion " + str(iteracion) + ':')
