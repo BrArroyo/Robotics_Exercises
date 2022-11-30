@@ -89,42 +89,43 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
   prev = dist
   # Para cada combinación de articulaciones:
   for i in range(len(th)):
+    pos = len(th) - i -1
     # cálculo de la cinemática inversa:
     #if es una articulación de revolución 
-    if not prismatica[len(th) - i -1]:
+    if not prismatica[pos]:
       # Calculamos el angulo 
-      v1 = [O[i][len(th)][0]-O[i][len(th) - i -1][0],O[i][len(th)][1] - O[i][len(th) - i -1][1]]
-      v2 = [objetivo[0] - O[i][len(th) - i -1][0],objetivo[1] - O[i][len(th) - i -1][1]]
+      v1 = [O[i][len(th)][0]-O[i][pos][0],O[i][len(th)][1] - O[i][pos][1]]
+      v2 = [objetivo[0] - O[i][pos][0],objetivo[1] - O[i][pos][1]]
       alfa1 = atan2(v1[1],v1[0])
       alfa2 = atan2(v2[1],v2[0])
       
       # Actualizamos el valor de la articulación
-      th[len(th) - i -1] = th[len(th) - i -1] + alfa2 - alfa1  
+      th[pos] = th[pos] + alfa2 - alfa1  
     
       # corregimos los angulos con los límites
-      if th[len(th) - i -1] > lim_max[len(th) - i -1]:
-        th[len(th) - i -1] = lim_max[len(th) - i -1]
-      if th[len(th) - i -1] < lim_min[len(th) - i -1]:
-        th[len(th) - i -1] = lim_min[len(th) - i -1]  
+      if th[pos] > lim_max[pos]:
+        th[pos] = lim_max[pos]
+      if th[pos] < lim_min[pos]:
+        th[pos] = lim_min[pos]  
       
     #else es una articulación prismática
     else:
-      # Calculamo la suma de las articulaciones
-      omega = sum(th[0:len(th) - i -1])
+      # Calculamos la suma de las articulaciones
+      omega = sum(th[0:pos])
       
       # Calculamos los vectores correspondientes y calculamos el producto escalar
       vector_despesplazamiento = [cos(omega),sin(omega)]
-      vector_acercamiento = np.subtract(objetivo, [O[i][len(th) - i -1][0], O[i][len(th) - i -1][1]])
+      vector_acercamiento = np.subtract(objetivo, [O[i][pos][0], O[i][pos][1]])
       distancia = np.dot(vector_despesplazamiento, vector_acercamiento)
       
       # Actualizamos el valor de la articulación
-      a[len(th) - i -1] += distancia
+      a[pos] += distancia
       
-      # corregimos las distancia con los limiites
-      if a[len(th) - i -1] > lim_max[len(th) - i -1]:
-        a[len(th) - i -1] = lim_max[len(th) - i -1]
-      if a[len(th) - i -1] < lim_min[len(th) - i -1]:
-        a[len(th) - i -1] = lim_min[len(th) - i -1] 
+      # corregimos las distancia con los limites
+      if a[pos] > lim_max[pos]:
+        a[pos] = lim_max[pos]
+      if a[pos] < lim_min[pos]:
+        a[pos] = lim_min[pos] 
       
     O[i+1] = cin_dir(th,a)
 
