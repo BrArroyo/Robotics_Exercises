@@ -60,15 +60,15 @@ def cin_dir(th,a):
 # Cálculo de la cinemática inversa de forma iterativa por el método CCD
 
 # valores articulares arbitrarios para la cinemática directa inicial
-th=[0.,0.,0.,0.]
-a =[5.,5.,5.,2.]
-prismatica = [False, False, False, True]
+th=[0.,0.,0.]
+a =[5.,5.,2.]
+prismatica = [False, False, True]
 L = sum(a) # variable para representación gráfica
 EPSILON = .01
 
 # Limites de los articulaciones
-lim_max = [pi/2, pi/2, pi/2, 10]
-lim_min = [-pi/2, -pi/2, -pi/2, 0]
+lim_max = [pi/2, pi/2, 10]
+lim_min = [-pi/2, -pi/2, 0]
 
 plt.ion() # modo interactivo
 
@@ -114,9 +114,9 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
       omega = sum(th[0:pos])
       
       # Calculamos los vectores correspondientes y calculamos el producto escalar
-      vector_despesplazamiento = [cos(omega),sin(omega)]
-      vector_acercamiento = np.subtract(objetivo, [O[i][pos][0], O[i][pos][1]])
-      distancia = np.dot(vector_despesplazamiento, vector_acercamiento)
+      vector_desplazamiento = [cos(omega),sin(omega)]
+      vector_acercamiento = np.subtract(objetivo, [O[i][len(th)][0], O[i][len(th)][1]])
+      distancia = np.dot(vector_desplazamiento, vector_acercamiento)
       
       # Actualizamos el valor de la articulación
       a[pos] += distancia
