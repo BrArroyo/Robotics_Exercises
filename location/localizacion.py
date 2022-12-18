@@ -8,6 +8,7 @@
 
 # ejecución: python localizacion.py  
 
+
 import sys
 from math import *
 from robot import robot
@@ -53,7 +54,7 @@ def mostrar(objetivos,ideal,trayectoria):
   objT   = np.array(objetivos).T.tolist()
   plt.plot(objT[0],objT[1],'-.o')
   plt.show()
-  input()
+  raw_input()
   plt.clf()
 
 def localizacion(balizas, real, ideal, centro, radio, mostrar=0):
@@ -111,7 +112,7 @@ def localizacion(balizas, real, ideal, centro, radio, mostrar=0):
     plt.plot(ideal.x,ideal.y,'D',c='#ff00ff',ms=10,mew=2) # Robot ideal: Morado
     plt.plot(real.x, real.y, 'D',c='#00ff00',ms=10,mew=2) # Robot real: Verde
     plt.show()
-    input()
+    raw_input()
     plt.clf()
   
   # Devolvemos la posición
@@ -164,7 +165,7 @@ tiempo  = 0.
 espacio = 0.
 #random.seed(0)
 random.seed(datetime.now())
-# llamar a localización
+# llamar a localización inicialmente
 ###
 localizacion(objetivos, real, ideal, [2,2], 3, 1)
 ###
@@ -192,6 +193,8 @@ for punto in objetivos:
     
     # Aqui se podría corregir la posición del robot real
     ###
+    # if (real.sense, ideal.sense son similares)
+    ## rescolocar el robot real
     medidas = real.sense(objetivos)
     prob = ideal.measurement_prob(medidas, objetivos)
     print("Prob: " + str(prob))

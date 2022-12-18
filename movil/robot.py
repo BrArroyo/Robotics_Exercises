@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Robï¿½tica Computacional 
-# Grado en Ingenierï¿½a Informï¿½tica (Cuarto)
+# Robótica Computacional 
+# Grado en Ingeniería Informática (Cuarto)
 # Clase robot
 
 from math import *
@@ -12,7 +12,7 @@ import copy
 
 class robot:
   def __init__(self):
-    # Inicializacion de pose y parï¿½metros de ruï¿½do
+    # Inicializacion de pose y parámetros de ruído
     self.x             = 0.
     self.y             = 0.
     self.orientation   = 0.
@@ -36,7 +36,7 @@ class robot:
     while self.orientation < -pi: self.orientation += 2*pi
 
   def set_noise(self, new_f_noise, new_t_noise, new_s_noise):
-    # Modificar los parï¿½metros de ruï¿½do
+    # Modificar los parámetros de ruído
     self.forward_noise = float(new_f_noise);
     self.turn_noise    = float(new_t_noise);
     self.sense_noise   = float(new_s_noise);
@@ -57,7 +57,7 @@ class robot:
     return d
 
   def move(self, turn, forward):
-    # Modificar pose del robot (holonï¿½mico)
+    # Modificar pose del robot (holonómico)
     self.orientation += float(turn) + random.gauss(0., self.turn_noise)
     while self.orientation >  pi: self.orientation -= 2*pi
     while self.orientation < -pi: self.orientation += 2*pi
@@ -76,8 +76,8 @@ class robot:
     self.y += sin(self.orientation) * dist
 
   def Gaussian(self, mu, sigma, x):
-    # Calcular la probabilidad de 'x' para una distribuciï¿½n normal
-    # de media 'mu' y desviaciï¿½n tï¿½pica 'sigma'
+    # Calcular la probabilidad de 'x' para una distribución normal
+    # de media 'mu' y desviación típica 'sigma'
     if sigma:
       return exp(-(((mu-x)/sigma)**2)/2)/(sigma*sqrt(2*pi))
     else:
@@ -94,11 +94,11 @@ class robot:
     while diff >  pi: diff -= 2*pi
     while diff < -pi: diff += 2*pi
     self.weight = self.weight + abs(diff) 
-    #self.weight=self.weight/(n+1)
+    self.weight=self.weigh/(n+1)
     return self.weight
 
   def __repr__(self):
-    # Representaciï¿½n de la clase robot
+    # Representación de la clase robot
     return '[x=%.6s y=%.6s orient=%.6s]' % \
             (str(self.x), str(self.y), str(self.orientation))
 
