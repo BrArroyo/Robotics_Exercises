@@ -142,7 +142,7 @@ espacio = 0.
 random.seed(datetime.now())
 
 # llamar a localización inicialmente
-localizacion(objetivos, real, ideal, [2,2], 4, 1)
+localizacion(objetivos, real, ideal, ideal.pose(), 6, 1)
 
 for punto in objetivos:
   while distancia(tray_ideal[-1],punto) > EPSILON and len(tray_ideal) <= 1000:
