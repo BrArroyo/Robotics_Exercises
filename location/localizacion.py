@@ -58,48 +58,26 @@ def mostrar(objetivos,ideal,trayectoria):
   plt.clf()
 
 def localizacion(balizas, real, ideal, centro, radio, mostrar=0):
-  ## POSIBLES MEJORAS
-  # Hacer una busqueda piramidal donde cada vez voy siendo más preciso a la hora de buscar
-  # Mirar como corregir la orientación
-  ##
-  # Buscar la localizaci�n m�s probable del robot, a partir de su sistema
-  # sensorial, dentro de una regi�n cuadrada de centro "centro" y lado "2*radio".
-  
-  ## Cosas que tenian en la pizarra
-  # medidas del robot real
-  #
-  ####
   imagen = []
-  best_prob = 10
-  for j in np.arange(-radio, radio, 0.1):
+  min_prob = 100000
+  # Bucle de localización
+  for i in np.arange(-radio, radio, 0.1):
     imagen.append([])
-    for i in np.arange(-radio, radio, 0.1):
+    for j in np.arange(-radio, radio, 0.1):
+      # Establecemos la posicción ideal del robot
       ideal.set(centro[0]+i, centro[1]+j, ideal.orientation)
-      prob = real.measurement_prob(ideal.sense(balizas), balizas)
-      imagen[-1].append(prob)
-      if (prob < best_prob):
-        best_prob = prob
+      # Actualizamos el valor de la probabilidad
+      prob_actual = real.measurement_prob(ideal.sense(balizas), balizas)
+      imagen[-1].append(prob_actual)
+      # Comprobamos si es la mejor probabilidad
+      if (prob_actual < min_prob):
+        min_prob = prob_actual
         best_x = centro[0]+i
         best_y = centro[1]+j
-
-  ideal.set(best_x,best_y, real.orientation)
-  ####
-  # for ( i = -radio, incremento, +radio)
-  #   for (j = -radio, incremento, +radio)
-  #     poner al robot ideal en (centro x + 1, centro y +j, orientación)
-  #     Imagen >> almacenar probabilidad para esa posición = valor de measurement_prob
-  #     if measurement_prob < que las anteriores
-  #       Mejor posición = (Almacenamos posicion más probable de ideal)
-
-  # ideal en mejor posición
-  # incremento es la precisión con la que buscas dentro de una cuadrante.
-  # distreal = ideal.sense(balizas)
-  # print "info sobre el robot real: ", distreal
-  # for (i in range)
-
-
-
-
+  
+  # Con esto ya tendré mi robot ideal localizado.
+  ideal.set(best_x, best_y, real.orientation)
+  
   if mostrar:
     plt.ion() # modo interactivo
     plt.xlim(centro[0]-radio,centro[0]+radio)
@@ -114,9 +92,6 @@ def localizacion(balizas, real, ideal, centro, radio, mostrar=0):
     plt.show()
     raw_input()
     plt.clf()
-  
-  # Devolvemos la posición
-  #return centro[0] + index[0], centro[1] + index[1]
 
 # ******************************************************************************
 
@@ -165,10 +140,10 @@ tiempo  = 0.
 espacio = 0.
 #random.seed(0)
 random.seed(datetime.now())
+
 # llamar a localización inicialmente
-###
-localizacion(objetivos, real, ideal, [2,2], 3, 1)
-###
+localizacion(objetivos, real, ideal, [2,2], 4, 1)
+
 for punto in objetivos:
   while distancia(tray_ideal[-1],punto) > EPSILON and len(tray_ideal) <= 1000:
     pose = ideal.pose()
@@ -191,16 +166,14 @@ for punto in objetivos:
     tray_ideal.append(ideal.pose())
     tray_real.append(real.pose())
     
-    # Aqui se podría corregir la posición del robot real
-    ###
-    # if (real.sense, ideal.sense son similares)
-    ## rescolocar el robot real
-    medidas = real.sense(objetivos)
-    prob = ideal.measurement_prob(medidas, objetivos)
-    print("Prob: " + str(prob))
-    if (prob > 0.7):
-      localizacion(objetivos, real, ideal, ideal.pose(), 0.7)
-    ###
+    # Corregimos la posición del robot real
+    prob = ideal.measurement_prob(real.sense(objetivos), objetivos)
+    if (prob > 0.75):
+      localizacion(objetivos, real, ideal, ideal.pose(), 0.75, 0)
+      print("Prob: " + str(prob))
+      print("Posición ideal: " + str(ideal.pose()))
+      print("Posición real:" + str(real.pose()))
+      print("") 
 
     espacio += v
     tiempo  += 1
