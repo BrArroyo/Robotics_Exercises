@@ -138,8 +138,8 @@ tray_real = [real.pose()]     # Trayectoria seguida
 
 tiempo  = 0.
 espacio = 0.
-#random.seed(0)
-random.seed(datetime.now())
+random.seed(0)
+#random.seed(datetime.now())
 
 # llamar a localización inicialmente
 localizacion(objetivos, real, ideal, ideal.pose(), 6, 1)
@@ -168,8 +168,8 @@ for punto in objetivos:
     
     # Corregimos la posición del robot real
     prob = ideal.measurement_prob(real.sense(objetivos), objetivos)
-    if (prob > 0.75):
-      localizacion(objetivos, real, ideal, ideal.pose(), 0.75, 0)
+    if (prob > 0.8):
+      localizacion(objetivos, real, ideal, ideal.pose(), 0.8, 0)
       print("Prob: " + str(prob))
       print("Posición ideal: " + str(ideal.pose()))
       print("Posición real:" + str(real.pose()))
