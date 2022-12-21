@@ -76,7 +76,7 @@ def localizacion(balizas, real, ideal, centro, radio, mostrar=0):
         best_y = centro[1]+j
   
   # Con esto ya tendré mi robot ideal localizado.
-  ideal.set(best_x, best_y, real.orientation)
+  ideal.set(best_x, best_y, ideal.orientation)
   
   if mostrar:
     plt.ion() # modo interactivo
