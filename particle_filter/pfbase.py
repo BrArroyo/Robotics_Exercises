@@ -60,7 +60,7 @@ def mostrar(objetivos,trayectoria,trayectreal,filtro):
   plt.draw()
 #  if sys.stdin in select.select([sys.stdin],[],[],.01)[0]:
 #    line = sys.stdin.readline()
-  input()
+  raw_input()
 
 ###
 def genera_filtro(num_particulas, balizas, real, centro=[2,2], radio=3):
@@ -192,5 +192,5 @@ print ("Recorrido: "+str(round(espacio,3))+"m / "+str(tiempo/FPS)+"s")
 print ("Error medio de la trayectoria: "+str(round(sum(\
     [distancia(trayectoria[i],trayectreal[i])\
     for i in range(len(trayectoria))])/tiempo,3))+"m")
-input()
+raw_input()
 
