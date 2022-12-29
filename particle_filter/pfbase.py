@@ -70,9 +70,7 @@ def genera_filtro(num_particulas, balizas, real, centro=[2,2], radio=3):
   medidas = real.sense(balizas) # Tomamos medidas del robot real para poder calcular el peso de las partículas.
   for i in range(num_particulas):
     filtro.append(real.copy())
-    filtro[-1].set(centro[0]+random.uniform(-radio,radio),\
-      centro[1]+random.uniform(-radio,radio),\
-      random.uniform(-pi,pi))
+    filtro[-1].set(centro[0]+np.random.uniform(-radio,radio), centro[1]+np.random.uniform(-radio,radio),medidas[-1]+np.random.uniform(-1,1))
     filtro[-1].measurement_prob(medidas,balizas) 
   return filtro
 ### 
@@ -88,8 +86,11 @@ def dispersion(filtro):
 ###
 def peso_medio(filtro):
   # Peso medio normalizado del filtro de particulas
-  mayor = max([p.weight for p in filtro])
-  return sum([p.weight/mayor for p in filtro])/len(filtro)
+  media=0
+  for particula in filtro:
+    media += particula.weight
+  media /= len(filtro)
+  return media 
 ###
 
 # ******************************************************************************
@@ -139,7 +140,7 @@ real.set(*P_INICIAL)
 #inicializaci�n del filtro de part�culas y de la trayectoria
 filtro = genera_filtro(N_INICIAL, objetivos, real)
 trayectoria = [hipotesis(filtro)]
-filtro = resample(filtro,N_PARTIC)
+#filtro = resample(filtro,N_PARTIC)
 ###
 
 trayectreal = [real.pose()]
@@ -171,18 +172,23 @@ for punto in objetivos:
         filtro[i].move_triciclo(w, v, LONGITUD)
         filtro[i].measurement_prob(measurement, objetivos)
     ###
+
     ###
     # Seleccionar hip�tesis de localizaci�n y actualizar la trayectoria
-      trayectoria.append(hipotesis(filtro)) 
-      trayectreal.append(real.pose())
-      if peso_medio(filtro) < 0.1:
-        filtro = resample(filtro, N_PARTIC)
+    trayectoria.append(hipotesis(filtro))
+    
+    # particula más probable
+    if dispersion(filtro) > 1 or peso_medio(filtro) < 0.1:
+      filtro = resample(filtro, N_PARTIC)
     ###
-
+    
+    # mostrar
     trayectreal.append(real.pose())
     mostrar(objetivos,trayectoria,trayectreal,filtro)
 
     # remuestreo
+
+
     espacio += v
     tiempo  += 1
 
