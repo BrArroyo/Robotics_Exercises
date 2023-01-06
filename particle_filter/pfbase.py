@@ -137,21 +137,20 @@ real.set_noise(.01,.01,.01) # Ruido lineal / radial / de sensado
 real.set(*P_INICIAL)
 
 ###
-#inicializaci�n del filtro de part�culas y de la trayectoria
+#inicializacion del filtro de particulas y de la trayectoria
 filtro = genera_filtro(N_INICIAL, objetivos, real)
 trayectoria = [hipotesis(filtro)]
-#filtro = resample(filtro,N_PARTIC)
+trayectreal = [real.pose()]
 ###
 
-trayectreal = [real.pose()]
 
 tiempo  = 0.
 espacio = 0.
 for punto in objetivos:
   while distancia(trayectoria[-1],punto) > EPSILON and len(trayectoria) <= 1000:
 
-    #seleccionar pose
     ###
+    #seleccionar pose
     w = angulo_rel(trayectoria[-1],punto)
     if w > W:  w =  W
     if w < -W: w = -W
@@ -174,21 +173,16 @@ for punto in objetivos:
     ###
 
     ###
-    # Seleccionar hip�tesis de localizaci�n y actualizar la trayectoria
+    # Seleccionar hipotesis de localizacion y actualizar la trayectoria
     trayectoria.append(hipotesis(filtro))
-    
-    # particula más probable
-    if dispersion(filtro) > 1 or peso_medio(filtro) < 0.1:
-      filtro = resample(filtro, N_PARTIC)
-    ###
-    
-    # mostrar
     trayectreal.append(real.pose())
+         
+    # mostrar
     mostrar(objetivos,trayectoria,trayectreal,filtro)
 
     # remuestreo
-
-
+    if dispersion(filtro) > 1 or peso_medio(filtro) > 2:
+      filtro = resample(filtro, N_PARTIC)
     espacio += v
     tiempo  += 1
 
